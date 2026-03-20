@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, Suspense } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, 
@@ -12,6 +12,7 @@ import {
   Download,
   LogOut
 } from 'lucide-react';
+import { WdkWalletButton } from './WdkWalletButton';
 
 // Chain icons using Lucide
 const ChainIcon = ({ chainId }) => {
@@ -239,6 +240,9 @@ export default function Header({
                   </span>
                 </div>
 
+                {/* WDK Wallet Button */}
+                <WdkWalletButton />
+
                 {/* Notification Bell */}
                 <NotificationBell count={2} />
 
@@ -246,12 +250,17 @@ export default function Header({
                 <SettingsDropdown />
               </>
             ) : (
-              <button
-                className="btn-primary"
-                onClick={onConnect}
-              >
-                Connect Wallet
-              </button>
+              <>
+                {/* WDK Wallet Button */}
+                <WdkWalletButton />
+                
+                <button
+                  className="btn-primary"
+                  onClick={onConnect}
+                >
+                  Connect Wallet
+                </button>
+              </>
             )}
 
             {/* Mobile Menu Toggle */}

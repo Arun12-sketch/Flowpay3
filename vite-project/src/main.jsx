@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import './index.css'
-import { ToastProvider } from './components/ui'
+import { ToastProvider, ErrorBoundary } from './components/ui'
 import { WalletProvider } from './context/WalletContext'
 import Layout from './components/Layout'
 import Dashboard from './pages/Dashboard'
@@ -25,12 +25,14 @@ function AppRoutes() {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <ToastProvider>
-        <WalletProvider>
-          <AppRoutes />
-        </WalletProvider>
-      </ToastProvider>
-    </BrowserRouter>
+    <ErrorBoundary variant="fullscreen">
+      <BrowserRouter>
+        <ToastProvider>
+          <WalletProvider>
+            <AppRoutes />
+          </WalletProvider>
+        </ToastProvider>
+      </BrowserRouter>
+    </ErrorBoundary>
   </StrictMode>,
 )

@@ -2,6 +2,22 @@ import { createContext, useContext, useState, useMemo, useEffect, useCallback } 
 import { ethers } from 'ethers';
 import { contractAddress, contractABI, mneeTokenAddress, mneeTokenABI } from '../contactInfo.js';
 import { useToast } from '../components/ui';
+import { wdkSepoliaConfig } from '../config/wdkConfig.js';
+
+let WalletManagerEvmErc4337 = null;
+
+// Lazy load WDK module
+const loadWdkModule = async () => {
+  if (!WalletManagerEvmErc4337) {
+    try {
+      const module = await import('@tetherto/wdk-wallet-evm');
+      WalletManagerEvmErc4337 = module.default;
+    } catch (e) {
+      console.warn('WDK wallet module failed to load:', e.message);
+    }
+  }
+  return WalletManagerEvmErc4337;
+};
 
 const WalletContext = createContext(null);
 
@@ -17,6 +33,8 @@ export function WalletProvider({ children }) {
   const [status, setStatus] = useState('Not Connected');
   const [isProcessing, setIsProcessing] = useState(false);
   const [mneeBalance, setMneeBalance] = useState('0.0');
+  const [walletType, setWalletType] = useState(null); // 'metamask' or 'wdk'
+  const [wdkAccount, setWdkAccount] = useState(null); // WDK account instance
 
   // Stream state
   const [incomingStreams, setIncomingStreams] = useState([]);
@@ -63,7 +81,15 @@ export function WalletProvider({ children }) {
     }
   };
 
-  const connectWallet = async () => {
+  const connectWallet = async (type = 'metamask') => {
+    if (type === 'wdk') {
+      await connectWdkWallet();
+    } else {
+      await connectMetaMask();
+    }
+  };
+
+  const connectMetaMask = async () => {
     if (typeof window.ethereum === 'undefined') {
       setStatus('Please install MetaMask.');
       toast.error('MetaMask not found', { title: 'Wallet Error' });
@@ -79,12 +105,53 @@ export function WalletProvider({ children }) {
       setProvider(nextProvider);
       setSigner(nextSigner);
       setWalletAddress(address);
-      setStatus('Connected');
-      toast.success(`Connected to ${address.slice(0, 6)}...${address.slice(-4)}`, { title: 'Wallet Connected' });
+      setWalletType('metamask');
+      setStatus('Connected with MetaMask');
+      toast.success(`Connected to ${address.slice(0, 6)}...${address.slice(-4)}`, { title: 'MetaMask Connected' });
     } catch (error) {
       console.error('Connection failed:', error);
       setStatus('Connection failed.');
       toast.error(error?.message || 'Failed to connect wallet', { title: 'Connection Failed' });
+    }
+  };
+
+  const connectWdkWallet = async () => {
+    try {
+      setStatus('Initializing WDK wallet...');
+      
+      // Load WDK module if not already loaded
+      const WdkModule = await loadWdkModule();
+      if (!WdkModule) {
+        throw new Error('WDK wallet module not available');
+      }
+
+      // Get seed phrase from localStorage or environment
+      const seedPhrase = localStorage.getItem('wdk_seed_phrase') || process.env.WDK_SEED_PHRASE;
+      
+      if (!seedPhrase) {
+        toast.warning('WDK seed phrase not configured.', { title: 'Setup Required' });
+        setStatus('WDK seed phrase required.');
+        return;
+      }
+
+      const wdkManager = new WdkModule(seedPhrase, wdkSepoliaConfig);
+      const account = wdkManager.getAccount("m/44'/60'/0'/0/0");
+      const address = account.address;
+
+      // Create ethers provider from WDK config
+      const nextProvider = new ethers.JsonRpcProvider(wdkSepoliaConfig.provider);
+      
+      setWdkAccount(account);
+      setProvider(nextProvider);
+      setWalletAddress(address);
+      setWalletType('wdk');
+      setChainId(11155111);
+      setStatus('Connected with WDK');
+      toast.success(`Connected WDK ${address.slice(0, 6)}...${address.slice(-4)}`, { title: 'WDK Connected' });
+    } catch (error) {
+      console.error('WDK connection failed:', error);
+      setStatus('WDK connection failed.');
+      toast.error(error?.message || 'Failed to connect WDK wallet', { title: 'WDK Connection Failed' });
     }
   };
 
@@ -279,8 +346,9 @@ export function WalletProvider({ children }) {
   const value = {
     provider, signer, walletAddress, chainId, status, setStatus, isProcessing, setIsProcessing,
     mneeBalance, incomingStreams, setIncomingStreams, outgoingStreams, isLoadingStreams, isInitialLoad,
-    contractWithProvider, contractWithSigner, getNetworkName, connectWallet, fetchMneeBalance,
-    mintMneeTokens, refreshStreams, withdraw, cancel, createStream, getClaimableBalance, formatEth, toast
+    contractWithProvider, contractWithSigner, getNetworkName, connectWallet, connectMetaMask, connectWdkWallet,
+    fetchMneeBalance, mintMneeTokens, refreshStreams, withdraw, cancel, createStream, getClaimableBalance, formatEth, 
+    toast, walletType, wdkAccount
   };
 
   return <WalletContext.Provider value={value}>{children}</WalletContext.Provider>;
