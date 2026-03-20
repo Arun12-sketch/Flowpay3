@@ -14,7 +14,10 @@ const flowPayMiddleware = require('../server/middleware/flowPayMiddleware');
 const FLOWPAYSTREAM_ADDRESS = '0x155A00fBE3D290a8935ca4Bf5244283685Bb0035';
 const MOCK_MNEE_ADDRESS = '0x96B1FE54Ee89811f46ecE4a347950E0D682D3896';
 // Use a more reliable RPC endpoint
-const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
+const RAW_SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
+const SEPOLIA_RPC_URL = RAW_SEPOLIA_RPC_URL
+    .replace(/^wss:\/\//, 'https://')
+    .replace(/^ws:\/\//, 'http://');
 
 /**
  * Demo Provider: "The Gatekeeper"

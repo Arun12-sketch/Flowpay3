@@ -17,7 +17,7 @@ FlowPay combines **x402's HTTP-native service discovery** with **continuous paym
 |----------|------|
 | **Live dApp** | https://flowpay-dashboard.netlify.app |
 | **Demo Video** | [Watch on YouTube](https://youtu.be/d2uZi4Agi1o?si=MKlDp4BQpHHnh5d6) |
-| **GitHub Repo** | https://github.com/ola-893/flowpay |
+| **GitHub Repo** | https://github.com/Arun12-sketch/flowpay |
 | **MNEE Contract (Mainnet)** | `0x8ccedbAe4916b79da7F3F612EfB2EB93A2bFD6cF` |
 
 ---
@@ -32,7 +32,7 @@ FlowPay combines **x402's HTTP-native service discovery** with **continuous paym
 ### Step 1: Clone & Install
 
 ```bash
-git clone https://github.com/ola-893/flowpay.git
+git clone https://github.com/Arun12-sketch/flowpay.git
 cd flowpay
 npm run install:all
 ```

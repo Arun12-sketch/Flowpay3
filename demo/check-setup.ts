@@ -10,20 +10,23 @@ dotenv.config();
 const FLOWPAYSTREAM_ADDRESS = '0x155A00fBE3D290a8935ca4Bf5244283685Bb0035';
 const MOCK_MNEE_ADDRESS = '0x96B1FE54Ee89811f46ecE4a347950E0D682D3896';
 // Use a more reliable RPC endpoint
-const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
+const RAW_SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
+const SEPOLIA_RPC_URL = RAW_SEPOLIA_RPC_URL
+    .replace(/^wss:\/\//, 'https://')
+    .replace(/^ws:\/\//, 'http://');
 
 async function checkSetup() {
     console.log("🔍 FlowPay Demo Setup Check\n");
 
     // 1. Check environment variables
     console.log("1️⃣  Environment Variables:");
-    const privateKey = process.env.PRIVATE_KEY_1;
+    const privateKey = process.env.PRIVATE_KEY_1 || process.env.PRIVATE_KEY;
     const geminiKey = process.env.GEMINI_API_KEY;
 
     if (privateKey) {
-        console.log("   ✅ PRIVATE_KEY_1: Found");
+        console.log("   ✅ PRIVATE_KEY_1/PRIVATE_KEY: Found");
     } else {
-        console.log("   ❌ PRIVATE_KEY_1: Missing - Add to .env file");
+        console.log("   ❌ PRIVATE_KEY_1/PRIVATE_KEY: Missing - Add to .env file");
     }
 
     if (geminiKey) {
@@ -33,7 +36,7 @@ async function checkSetup() {
     }
 
     if (!privateKey) {
-        console.log("\n❌ Cannot continue without PRIVATE_KEY_1");
+        console.log("\n❌ Cannot continue without PRIVATE_KEY_1 or PRIVATE_KEY");
         return;
     }
 

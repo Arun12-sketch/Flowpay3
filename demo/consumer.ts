@@ -9,7 +9,10 @@ dotenv.config();
 const FLOWPAYSTREAM_ADDRESS = '0x155A00fBE3D290a8935ca4Bf5244283685Bb0035';
 const MOCK_MNEE_ADDRESS = '0x96B1FE54Ee89811f46ecE4a347950E0D682D3896';
 // Use a more reliable RPC endpoint
-const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
+const RAW_SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL || 'https://ethereum-sepolia-rpc.publicnode.com';
+const SEPOLIA_RPC_URL = RAW_SEPOLIA_RPC_URL
+    .replace(/^wss:\/\//, 'https://')
+    .replace(/^ws:\/\//, 'http://');
 
 /**
  * Demo Consumer: "The AI Agent Application"
@@ -24,9 +27,9 @@ async function runDemo() {
     console.log("🚀 Starting FlowPay Demo Consumer (Real Blockchain Mode)...\n");
 
     // Get private key from environment
-    const privateKey = process.env.PRIVATE_KEY_1;
+    const privateKey = process.env.PRIVATE_KEY_1 || process.env.PRIVATE_KEY;
     if (!privateKey) {
-        throw new Error("PRIVATE_KEY_1 not found in .env file");
+        throw new Error("PRIVATE_KEY_1 or PRIVATE_KEY not found in .env file");
     }
 
     // Verify Gemini API key is available

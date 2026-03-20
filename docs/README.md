@@ -45,6 +45,6 @@ FlowPay enables AI agents to pay for API services using continuous payment strea
 
 ## Community
 
-- [GitHub Repository](https://github.com/your-org/flowpay)
+- [GitHub Repository](https://github.com/Arun12-sketch/flowpay)
 - [Discord Community](https://discord.gg/flowpay)
 - [Twitter](https://twitter.com/flowpay)
