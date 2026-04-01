@@ -37,7 +37,7 @@ Open http://localhost:5173 in your browser.
 
 1. **Add Sepolia to MetaMask** (if not already added):
    - Network: Sepolia
-   - RPC: `https://sepolia.infura.io/v3/YOUR_KEY` or use MetaMask's default
+   - RPC: `https://sepolia.infura.io/v3/YOUR_KEY` 
    - Chain ID: `11155111`
 
 2. **Get Sepolia ETH** for gas fees:
