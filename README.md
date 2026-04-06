@@ -292,19 +292,6 @@ await computeStream.cancel(); // Refunds remaining deposit
 
 ---
 
-## 💡 Why x402 + MNEE Streaming?
-
-| Feature | x402 Only | Streaming Only | FlowPay Hybrid |
-|---------|-----------|----------------|----------------|
-| Discovery | ✅ Standard HTTP 402 | ❌ Custom | ✅ Standard HTTP 402 |
-| Low-volume efficiency | ✅ Pay per request | ❌ Deposit overhead | ✅ Per-request mode |
-| High-volume efficiency | ❌ Gas per request | ✅ One stream | ✅ Streaming mode |
-| AI optimization | ❌ | ❌ | ✅ Gemini selects mode |
-| Interoperability | ✅ x402 ecosystem | ❌ Custom | ✅ x402 compatible |
-| MNEE native | ❌ Generic | ✅ | ✅ |
-
----
-
 ## 🏗️ Architecture
 
 ```
